@@ -4,7 +4,7 @@
 
 <p> Function Get-PCType(){
     If ((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 1){
-      Write-Host "This is a Workstation"
+&emsp;&emsp;&emsp;      Write-Host "This is a Workstation"
      }ElseIf((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 2){
       Write-Host "This is a Domain Controller"
     }ElseIf((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 3){
