@@ -9,5 +9,6 @@
 <br>&emsp;&emsp;&emsp;Write-Host "This is a Domain Controller"
 <br>&emsp;&emsp;}ElseIf((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 3){
 <br>&emsp;&emsp;&emsp;Write-Host "This is a Server (But NOT a DC)"
-<br>&emsp;&emsp;}Else{Write-Host "Unknown PC Type"}}
+<br>&emsp;&emsp;}Else{Write-Host "Unknown PC Type"}
+<br>&emsp;}
 
