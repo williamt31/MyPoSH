@@ -1,8 +1,7 @@
 # Misc. Functions
 
 ## Function to Determine PC/Server/Domain Controller Configuration of PC
-
-<p><br>Function Get-PCType(){
+<p>Function Get-PCType(){
 <br>&emsp;If ((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 1){
 <br>&emsp;&emsp;Write-Host "This is a Workstation"
 <br>&emsp;&emsp;}ElseIf((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 2){
