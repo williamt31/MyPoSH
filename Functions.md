@@ -12,7 +12,7 @@
 <br>&emsp;}
 
 ## Function to Determin Zone Identifier of Downloaded File
-<p>Functino Get-ZoneIdent(){
+<p>Function Get-ZoneIdent(){
 <br>&emsp;If (Get-Item $1 -Stream Zone.Identifier -eq 0){
 <br>&emsp;&emsp;Write-Host "$1 Came from Zone 'My Computer'"
 <br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 1){
