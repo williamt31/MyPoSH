@@ -8,7 +8,7 @@
 <br>&emsp;&emsp;&emsp;Write-Host "This is a Domain Controller"
 <br>&emsp;&emsp;}ElseIf((Get-CimInstance -ClassName Win32_OperatingSystem).ProductType -eq 3){
 <br>&emsp;&emsp;&emsp;Write-Host "This is a Server (But NOT a DC)"
-<br>&emsp;&emsp;}Else(Write-Host "Unknown PC Type")
+<br>&emsp;&emsp;}Else{Write-Host "Unknown PC Type"}
 <br>&emsp;}
 
 ## Function to Determin Zone Identifier of Downloaded File
@@ -23,5 +23,5 @@
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Internet Zone'" 
 <br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 4){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Restricted Sites Zone'" 
-<br>&emsp;}Else(Write-Host "Unknown Zone Info")
+<br>&emsp;}Else{Write-Host "Unknown Zone Info"}
 <br>&emsp;}
