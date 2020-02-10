@@ -23,5 +23,5 @@
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Internet Zone'" 
 <br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 4){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Restricted Sites Zone'" 
-<br>&emsp;}Else(Write-Host "Unknown Zone Info")
+<br>&emsp;}Else{Write-Host "Unknown Zone Info"}
 <br>&emsp;}
