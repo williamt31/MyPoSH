@@ -13,15 +13,15 @@
 
 ## Function to Determin Zone Identifier of Downloaded File
 <p>Function Get-ZoneIdent($1){
-<br>&emsp;If (Get-Item $1 -Stream Zone.Identifier -eq 0){
+<br>&emsp;If ((Get-Item $1 -Stream Zone.Identifier) -eq 0){
 <br>&emsp;&emsp;Write-Host "$1 Came from Zone 'My Computer'"
-<br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 1){
+<br>&emsp;}ElseIf((Get-Item $1 -Stream Zone.Identifier) -eq 1){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Local Intranet Zone'"
-<br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 2){
+<br>&emsp;}ElseIf((Get-Item $1 -Stream Zone.Identifier) -eq 2){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Trusted Sites Zone'"
-<br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 3){
+<br>&emsp;}ElseIf((Get-Item $1 -Stream Zone.Identifier) -eq 3){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Internet Zone'" 
-<br>&emsp;}ElseIf(Get-Item $1 -Stream Zone.Identifier -eq 4){
+<br>&emsp;}ElseIf((Get-Item $1 -Stream Zone.Identifier) -eq 4){
 <br>&emsp;&emsp;Write-Host "$1 came from Zone 'Restricted Sites Zone'" 
 <br>&emsp;}Else{Write-Host "Unknown Zone Info"}
 <br>&emsp;}
