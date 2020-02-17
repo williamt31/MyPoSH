@@ -11,7 +11,7 @@
 <br>&emsp;&emsp;}Else{Write-Host "Unknown PC Type"}
 <br>&emsp;}
 
-## Function to Determin Zone Identifier of Downloaded File
+## Function to Determine Zone Identifier of Downloaded File
 <p>Function Get-ZoneIdent($1){
 <br>&emsp;If ((Get-Item $1 -Stream Zone.Identifier) -eq 0){
 <br>&emsp;&emsp;Write-Host "$1 Came from Zone 'My Computer'"
