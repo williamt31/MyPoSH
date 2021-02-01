@@ -14,6 +14,7 @@
     1.0                 Intial Creation/Modification of Script
     1.1     20210123    Improved Error Capture/Logic Checking
     1.2     20210130    Fixed Mandatory Variable Testing and Output, Added 'Test' Switch
+    1.3     20210131    Additional logic and bug fixes
 
 .INPUTS
     <Inputs if any, otherwise state None>
@@ -34,9 +35,9 @@
 #>
 [cmdletbinding()]
 Param (
-    [parameter(mandatory=$false, ValueFromPipeline=$false)][String]$sVersion = "2",    
+    [parameter(mandatory=$false, ValueFromPipeline=$false)][String]$sVersion = "1.3",    
     [parameter(mandatory=$false, ValueFromPipeline=$true)][String]$MinSize = "500MB",
-    [parameter(mandatory=$true, ValueFromPipeline=$true)][String]$MediaPath,
+    [parameter(mandatory=$false, ValueFromPipeline=$true)][String]$MediaPath,
     [parameter(mandatory=$false, ValueFromPipeline=$true)][String]$OutFile,
     [parameter(mandatory=$false, ValueFromPipeline=$true)][Switch]$Test,
     [parameter(mandatory=$false, ValueFromPipeline=$true)][Switch]$Detailed,
@@ -74,38 +75,42 @@ Function DependancyCheck(){
 
 #-------------------------------------------------------[Main Function]----------------------------------------------------------
 Function Get-MediaInfoScript(){
-    If (!( $Test )){    
-        #Begin Output File/Directory Safety Checks
+    #Begin Source Path Testing
+    While (!( $MediaPath )){
+        Write-Host "'$MediaPath' Isn't a valid Path"
+        $MediaPath = Read-Host -Prompt 'Enter a Valid Path ex. "C:\Media"'
+    }   Write-Verbose "Path to Media to be Scanned: '$MediaPath'"
+
+    #Begin Output File/Directory Safety Checks
+    If (!( $Test )){
+        If (!( $OutFile )){
+            $OutFile = Read-Host -Prompt 'Output PATH does NOT exist.  Enter Output Path ex. "C:\Temp\FileName.CSV"'
+        }
         While (!(Test-Path (Split-Path $OutFile))){
             $OutFile = Read-Host -Prompt 'Directory does NOT exist.  Enter Path and ex. "C:\Temp\FileName.CSV"'
-        }   Write-Verbose "OutFilePath: $OutFilePath"
+        }
         $OutFilePath = Split-Path $OutFile
         $OutFileLeaf = Split-Path $OutFile -Leaf
+        Write-Verbose "OutFilePath: '$OutFilePath'"
 
         If (!($OutFileLeaf.Split('.')[1] -eq "csv")){
             $OutFileLeaf = $OutFileLeaf + ".csv"
-        }   Write-Verbose "OutFileLeaf: $OutFileLeaf"
+        }   Write-Verbose "OutFileLeaf: '$OutFileLeaf'"
         $OutFile = Join-Path $OutFilePath $OutFileLeaf
 
         While (Test-Path $OutFile){
             $OutFileLeaf = $OutFileLeaf.Split('.')[0] + "(1).csv"
             $OutFile = Join-Path $OutFilePath $OutFileLeaf
-        }   Write-Verbose "OutFile: $OutFile"
+        }   Write-Verbose "OutFile: '$OutFile'"
+    }
 
-        #Begin Optional FileSize Limitation Check
+    #Begin Optional FileSize Limitation Check
+    $MinSizeEnd = $MinSize.SubString($MinSize.Length -2)
+    While (!( $MinSizeEnd -eq "MB" -or  $MinSizeEnd -eq "GB" )){
+        Write-Host "'$MinSize' isn't a proper size notation"
+        $MinSize = Read-Host -Prompt 'Enter a Valid File Size ex. "500MB or 1GB etc"'
         $MinSizeEnd = $MinSize.SubString($MinSize.Length -2)
-        While (!( $MinSizeEnd -eq "MB" -or  $MinSizeEnd -eq "GB" )){
-            Write-Host "$MinSize isn't a proper size notation"
-            $MinSize = Read-Host -Prompt 'Enter a Valid File Size ex. "500MB or 1GB etc"'
-            $MinSizeEnd = $MinSize.SubString($MinSize.Length -2)
-        }   Write-Verbose "Minimum Media Size Constraint: $MinSize"
-}
-
-    #Begin Source Path Check
-    While (!(Test-Path $MediaPath)){
-        Write-Host "$MediaPath Isn't a valid Path"
-        $MediaPath = Read-Host -Prompt 'Enter a Valid Path'
-    }   Write-Verbose "Path to Media to be Scanned: $MediaPath"
+    }   Write-Verbose "Minimum Media Size Constraint: '$MinSize'"
 
     # Return Value Collections
 If( $Detailed ){ 
@@ -120,12 +125,18 @@ Else { #Basic
 
 If( $Test ){
     Get-ChildItem -Recurse $MediaPath |
-    Where-Object { $_.Length -gt $MinSize } | Get-MediaInfo |
-    Select-Object $ObtainedVals -First 10 | Format-Table #Testing Line
+    Where-Object { $_.Length -gt $MinSize } |
+    Get-MediaInfo -ErrorAction SilentlyContinue |
+    Sort-Object -Property FileName |
+    Select-Object $ObtainedVals -First 10 |
+    Format-Table #Testing Line
     }
 Else {
     Get-ChildItem -Recurse $MediaPath |
-    Where-Object { $_.Length -gt $MinSize } | Get-MediaInfo |
+    Where-Object { $_.Length -gt $MinSize } |
+    Get-MediaInfo -ErrorAction SilentlyContinue |
+    Sort-Object -Property FileName |
+    Select-Object $ObtainedVals |
     Export-Csv $OutFile -NoTypeInformation
     }
 }
