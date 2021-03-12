@@ -51,8 +51,8 @@ Function Log_Path_Test(){
 }
 
 # MUST BE SECOND TO WRITE TO LOG FILE
-Function sLogWrite($sExitStatus, $sExitCode, $sExitMsg){
-    Add-Content -Path $sLogFile -Value "$sExitStatus`t$sExitCode`t$sExitMsg"
+Function sLogWrite($sLogType, $sExitCode, $sLogMessage){
+    Add-Content -Value "$sLogType`t$sExitCode`t$(Get-Date -Format HH:mm:ss)`t$sLogMessage"-Path $sLogFile  -PassThru
 }
 
 #---------------------------------------------------------[User Functions]----------------------------------------------------------
