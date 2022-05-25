@@ -1,5 +1,10 @@
-# Code to open a (Windows) file dialog box and get a list of Hostnames regardless of whether it's a text or csv file.
-
+<###
+# Purpose: Code to open a (Windows) file dialog box and get a list of Hostnames regardless of whether it's a text or csv file.
+#
+# Author:   Williamt31
+# Created:  20220525
+#
+###>
 Function Get-File ( $GetWhat ) {
     Add-Type -AssemblyName System.Windows.Forms
     $GetFile = New-Object System.Windows.Forms.OpenFileDialog -Property @{ 
