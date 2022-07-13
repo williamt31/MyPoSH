@@ -30,7 +30,7 @@
 
 ######################################################################################################################>
 #------------------------------------------------[Initialisations]----------------------------------------------------#
-<### Self-elevate the script If required
+<### Self-elevate the script If required ###>
 If ( -Not ( [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent() ).IsInRole( [Security.Principal.WindowsBuiltInRole] 'Administrator' ) ) {
 	If ( [int]( Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber ) -ge 6000 ) {
 		$CommandLine = "-NoProfile -ExecutionPolicy Bypass -File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
@@ -38,7 +38,7 @@ If ( -Not ( [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 		Exit
 	}
 }
-###>
+
 # Set Error Action to Silently Continue
 $ErrorActionPreference = "SilentlyContinue"
 #------------------------------------------------[Declarations]-------------------------------------------------------#
