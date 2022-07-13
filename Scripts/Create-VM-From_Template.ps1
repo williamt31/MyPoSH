@@ -164,4 +164,5 @@ ForEach ( $VM in $VMs ) {
     $StopWatch.Reset()
     $iCount++
 }
-If ( $sVerbose ) { Write-Log $lInfo 0 "End executing $ScriptName Version: $sVersion"}
+Pause
+If ( $sVerbose ) { Write-Log $lInfo 0 "End executing $ScriptName Version: $sVersion" }
