@@ -1,4 +1,4 @@
-#requires -Version 5
+# requires -Version 5
 <######################################################################################################################
 .SYNOPSIS
     Facilitates connecting to Dev or Prod VmWare ENV.
@@ -36,34 +36,63 @@ If ( -Not ( [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIde
 }
 
 #------------------------------------------------[Declarations]--------------------------------------------------------
-
-# Script Version
-$sScriptVersion = "1.0"
+$ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$ScriptName = ( [IO.FileInfo]$MyInvocation.Definition ).BaseName
 
 # Log File Info
-$sLogPath = "C:\Logs"
-$sLogName = ([IO.FileInfo]$MyInvocation.MyCommand.Definition).BaseName
-$sLogDate = Get-Date -Format "yyyy-MM-dd_HH-mm_"
-$sLogFile = $sLogPath + [char]92 + $sLogDate + $sLogName + ".log"
-$ScriptPath= Split-Path -Parent $MyInvocation.MyCommand.Definition
-$ScriptName = $MyInvocation.MyCommand.Name
+$LogPath = $ENV:Temp
+$LogFile = $LogPath + [char]92 + $ScriptName + ".log"
+$LogDateTime = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId( [DateTime]::Now,"UTC" )
+$lInfo = "INFO"
+$lWarning = "WARNING"
+$lError = "ERROR"
+$sVerbose = $false
 
-#------------------------------------------------[Default Functions]---------------------------------------------------
-# Default Functions
-If ( -Not ( Test-Path -Path $sLogPath ) ) {
-	New-Item -ItemType Directory -Path $sLogPath -Force | Out-Null
-	If ( $? -eq $False ) {
-		Add-Content -Value "$( Get-Date -Format 'yyyyMMdd hh:mm:ss tt' )`tERROR`tUnable to create Log Directory" -Path "C:\CREATE_LOG_DIR_FAILED.Log" -PassThru
-		exit
-	}
-}
+# Script Version
+$ScriptVersion = "1.0"
 
+# Script Specific
+Set-PowerCLIConfiguration -Scope Session -InvalidCertificateAction -Ignore -Confirm:$false > $null
+Set-PowerCLIConfiguration -Scope User -ParticipateInCeip $false -Confirm:$false > $null
+$DevVcenter		= ""
+$DevESXi		= ""
+$ProdVcenter	= ""
+$ProdESXi		= ""
+#------------------------------------------------[Global Functions]---------------------------------------------------
+<###
+# Function:	Write-Log
+# Purpose:	Write Log to log file
+#
+# Parameters:	LogType, sExitCode & LogMessage
+#
+# Dependencies: N/A
+#
+# Returns:	Outputs to Log file and terminal
+###>
 Function Write-Log ( $sLogType, $sExitCode, $sLogMessage ) {
-    Add-Content -Value "$( Get-Date -Format 'yyyyMMdd hh:mm:ss tt' )`t$sLogType`t$sExitCode`t$sLogMessage" -Path $sLogFile -PassThru
+    Add-Content -Value "$( Get-Date -Format 'yyyyMMdd hh:mm:ss tt' )`t$sLogType`t$sExitCode`t$sLogMessage" -Path $LogFile -PassThru
 }
 
+If ( -Not ( ( $Global:DefaultVIServers ).Count -eq 0 ) ) {
+	$Global:DefaultVIServers | Disconnect-ViServer -Confirm:$false > $null
+	If ( $sVerbose ) { Write-Log $lInfo 0 "Disconnecting from $Global:ViServers"
+}
 #---------------------------------------------------------[User Functions]----------------------------------------------------------
+Function Set-Server () {
+	Write-Host "`n`tDo you want to connect to the (D)ev or (P)rod VmWare ENV?"
+	Write-Host -NoNewLine "`tNOTE: At any time you can type 'X' to Exit: "
+	$Response = Read-Host
+	If ( $Response -eq "D" ) {
+		Write-Host "`tUser chose Dev"
+		Write-Host -NoNewLine "`tDo you want to connect to v(C)enter or a (E)SXi host?: "
+		$Response = Read-Host
+		If ( $Response -eq "C" ) {
+			Write-Host "`tUser chose vCenter"
+			$VIServer = 
+			$VAdmin = 
 
+
+}
 
 
 #-----------------------------------------------------------[Execution]------------------------------------------------------------
