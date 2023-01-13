@@ -1,5 +1,5 @@
 Function Menu () {
-    param ( [string]$Title = ' ---- User Profile backup util ' )
+    param ( [string]$Title = ' ---- User Profile Migration Tool ' )
     $Selection
     #Clear-Host
     Write-Host "  =====$Title====="
@@ -20,7 +20,7 @@ Function BackupU () {
     [Int]$Ans = Read-Host 'Select User Folder: '
     $Selection = $Menu.Item( $Ans )
     $SelectDir = $( "C:\Users\" + "$Selection" )
-    $BackupDir   = $( "C:\Users\" + "$Selection" + ".bak" )
+    $BackupDir = $( "C:\Users\" + "$Selection" + ".bak" )
     Write-Host "`nRenaming: $SelectDir to $BackupDir"
 
     # Update registry profile path
@@ -60,7 +60,7 @@ Function RestoreU () {
 
 Menu
 $selection = Read-Host "`n`tPlease make a selection"
-switch ($selection) {
+Switch ( $Selection ) {
     'B' { BackupU }
     'R' { RestoreU }
     'Q' { Exit }
