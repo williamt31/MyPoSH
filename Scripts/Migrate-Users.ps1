@@ -48,10 +48,12 @@ Function RestoreU () {
 
     $DataDirs = ".ssh",".vscode","Desktop","Documents","Downloads","Logs"
     Foreach ( $Dir in $DataDirs ) {
-    #    $RoboArgs = @( $BackupDir\$Dir, $RestoreDir\$Dir , "/E", "/MIR", "/R:1", "/W:1", "/nc", "/nfl", "/ndl", "/np", "/njh", "/njs", "/A-:R" )
-    #    $ExitCode = ( Start-Process -FilePath Robocopy -ArgumentList $RoboArgs -Wait -PassThru ).ExitCode
+        If ( Test-Path -Path $( $BackupDir + "\" + $Dir ) ) {
+        #    $RoboArgs = @( $BackupDir\$Dir, $RestoreDir\$Dir , "/E", "/MIR", "/R:1", "/W:1", "/nc", "/nfl", "/ndl", "/np", "/njh", "/njs", "/A-:R" )
+        #    $ExitCode = ( Start-Process -FilePath Robocopy -ArgumentList $RoboArgs -Wait -PassThru ).ExitCode
 
-#    Write-Host $( $RestoreDir + "\" + $Dir )
+        #    Write-Host $( $RestoreDir + "\" + $Dir )
+        }
     }
 }
 
