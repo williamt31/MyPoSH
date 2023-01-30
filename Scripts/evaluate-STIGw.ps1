@@ -1,7 +1,4 @@
-# requires -Version 5
-<###################################################################################################
-# Org Banner Here!
-####################################################################################################
+<#
 .SYNOPSIS
     Wrapper script to make using NAVSEA script 'Evaluate-STIG' easier to use.
     
@@ -20,7 +17,7 @@
 .NOTES
     Author:     Williamt31
     
-    Version:    1.1
+    Version:    1.4
     Created:    20220808
     Updated:    20230130
 
@@ -29,10 +26,15 @@
 
 .LINK
 
+
 .COMPONENT
     Uses Evaluate-STIG from NAVSEA
 
-###################################################################################################>
+#> # Do NOT modify the format above this line or it will break help functionality!
+#Requires -Version 5.1
+####################################################################################################
+# !Org Banner Here!
+####################################################################################################
 #----------------------------------------[Initialisations]-----------------------------------------#
 # Self-elevate the script if required
 If ( -Not ( [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent() ).IsInRole( [Security.Principal.WindowsBuiltInRole] 'Administrator' ) ) {
@@ -49,21 +51,14 @@ $ScriptName = ( [IO.FileInfo]$MyInvocation.MyCommand.Definition ).BaseName
 $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $LogPath = $ScriptPath
 $LogFile = $LogPath + [char]92 + $ScriptName + ".Log"
-$DateTime = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::Now,"UTC")
 $lInfo = "INFO"
-$lWarning = "WARNING"
-$lError = "ERROR"
+#$lWarning = "WARNING"
+#$lError = "ERROR"
 $sVerbose = $false
-$iCount = 1
-$Done = $false
-$Loops = 0
-$StopWatch = New-Object -TypeName System.Diagnostics.StopWatch
 $ReportDate = Get-Date -Format 'yyyyMM'
-$ScriptLoc = < Network location 'Evaluate-STIG' files >
-$ReportLoc = < Network location to upload scan results ie.  loc\$ReportDate >
-#$$sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ExcludeSTIG SQL2016DB, SQL2016Instance", "-ComputerName $($Comps -Join ",")" # Original line.
-#$sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-ExcludeSTIG SQL2016DB, SQL2016Instance" # If you need to run all BUT select scans, use this line.
-$sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-SelectSTIG Firefox" # If you only need to run a select scan use this line.
+$ScriptLoc = "$ScriptPath\Evaluate-STIG\Evaluate-STIG.ps1"
+$ReportLoc = "$ScriptPath\$ReportDate"
+$exSTIGs = "SQL2016DB, SQL2016Instance" # If you need to run all BUT select scans, use this line. !!!Does NOT work in conjuction with SelectSTIG!!!
 #----------------------------------------[Global Functions]----------------------------------------#
 Function Write-Log ( $LogType, $sExitCode, $LogMessage ) {
 <############################################################
@@ -79,8 +74,11 @@ Function Write-Log ( $LogType, $sExitCode, $LogMessage ) {
 #
 # Returns:      Outputs to terminal and log file
 ############################################################>
-    Add-Content -Value "$( Get-Date -Format 'yyyy/MM/dd hh:mm:ss tt' )`t$LogType`t$sExitCode`t$LogMessage"
+    #Add-Content -Value "$( Get-Date -Format 'yyyy/MM/dd hh:mm:ss tt' )`t$LogType`t$sExitCode`t$LogMessage" -Path $LogFile -PassThru
+    $DateTime = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId([DateTime]::Now,"UTC").ToString('yyyy/MM/dd hh:mm:ss tt')
+    Add-Content -Value "$DateTime`t$LogType`t$sExitCode`t$LogMessage" -Path $LogFile -PassThru
 }
+
 Function Get-File ( $GetWhat ) {
 <############################################################
 # Function:     Get-File
@@ -102,8 +100,12 @@ Function Get-File ( $GetWhat ) {
     $Results = Get-Content -Path ( $GetFile ).FileName
     Return $Results
 }
+
 #----------------------------------------[Main Execution]------------------------------------------#
 If ( $sVerbose ) { Write-Log $lInfo 0 "Begin executing $ScriptName" }
+
+If ( -Not ( Test-Path $ReportLoc ) ) { New-Item -ItemType Directory -Name "$ScriptPath\$ReportDate" }
+
 Write-Host "`nDo you want to scan a (S)ingle PC or (M)ultiple PCs?"
 Write-Host -NoNewLine "(S/M/X): "
 $Response = Read-Host
@@ -123,6 +125,20 @@ Else {
     Write-Host "`n`tUndefined answer, exiting script.`n"
     Pause
     Exit
+}
+
+Write-Host "`nDo you want to run a (S)ingle check or (A)ll?"
+Write-Host -NoNewline "(S/A): "
+$Choice = Read-Host
+If ( $Choice -eq "S" ) {
+    Start-Process -FilePath Powershell.exe -ArgumentList "$ScriptLoc -ListApplicableProducts" -Wait -NoNewWindow
+    Write-Host "`n`tEnter 'Shortname' of desired scan: "
+    $inSTIGs = Read-Host
+    Write-Host $lInfo "Sending selected STIG: $inSTIGs to scanner."
+    $sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-SelectSTIG $inSTIGs"
+}
+Else {
+    $sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-ExcludeSTIG $exSTIGs"
 }
 
 Write-Log $lInfo "Sending Comps: $Comps to scanner."
