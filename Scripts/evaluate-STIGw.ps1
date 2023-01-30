@@ -25,7 +25,7 @@
     https://spork.navsea.navy.mil/nswc-crane-division/evaluate-stig
 
 .LINK
-
+    https://github.com/williamt31/MyPoSH/blob/master/Scripts/evaluate-STIGw.ps1
 
 .COMPONENT
     Uses Evaluate-STIG from NAVSEA
