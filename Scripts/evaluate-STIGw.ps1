@@ -134,14 +134,14 @@ If ( $Choice -eq "S" ) {
     Start-Process -FilePath Powershell.exe -ArgumentList "$ScriptLoc -ListApplicableProducts" -Wait -NoNewWindow
     Write-Host "`n`tEnter 'Shortname' of desired scan: "
     $inSTIGs = Read-Host
-    Write-Host $lInfo "Sending selected STIG: $inSTIGs to scanner."
+    Write-Log $lInfo 0 "Sending selected STIG: $inSTIGs to scanner."
     $sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-SelectSTIG $inSTIGs"
 }
 Else {
     $sArgs = "-ScanType UnClassified", "-ApplyTattoo", "-OutputPath $ReportLoc", "-ComputerName $($Comps -Join ",")", "-ExcludeSTIG $exSTIGs"
 }
 
-Write-Log $lInfo "Sending Comps: $Comps to scanner."
+Write-Log $lInfo 0 "Sending Comps: $Comps to scanner."
 Invoke-Expression "& `"$ScriptLoc`" $sArgs"
 Pause
 If ( $sVerbose ) { Write-Log $lInfo 0 "End executing $ScriptName" }
