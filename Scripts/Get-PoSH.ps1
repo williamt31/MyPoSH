@@ -65,6 +65,7 @@ $newVer = $realTagUrl.split('/')[-1].Trim('v')
 $versionFile = "Powershell_$newVer.txt"
 $fileName = "powershell-$newVer-linux-x64.tar.gz"
 $realDownloadUrl = $realTagUrl.Replace('tag', 'download') + '/' + $fileName
+$response.close()
 # If there is currently a "powershell_7.x.x.txt" file will compare the '7.x.x' in the file to the version online.
 If ( Test-Path -Path "$ScriptPath\Powershell_*.txt" ) {
     $currentPoshFile = ( Get-ChildItem -Path "$ScriptPath\powershell.tar.gz" -ErrorAction SilentlyContinue ).Name 
@@ -81,7 +82,7 @@ Else {
         Remove-Item -Path $ScriptPath\$PoSHfile
     }
     If ( $null -ne $currentVerFile ) {
-        Remove-Item -Path $ScriptPath\$currentVerFile
+        Remove-Item -Path "$ScriptPath\$currentVerFile.txt"
     }
 
     Invoke-WebRequest -Uri $realDownloadUrl -OutFile $ScriptPath\$PoSHfile
