@@ -8,7 +8,7 @@
     This cmdlet will facilitate connecting to VmWare servers.
 
 .NOTES
-    Author:         William Thompson
+    Author:         williamt31
 
     Creation Date:  20221018
     Version:        Purpose/Change:
