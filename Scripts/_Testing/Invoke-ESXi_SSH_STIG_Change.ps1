@@ -8,7 +8,7 @@
     This cmdlet will facilitate Troubleshooting VmWare ESXi servers.
 
 .NOTES
-    Author:         William Thompson
+    Author:         williamt31
 
     Creation Date:  20221110
     Version:        Purpose/Change:
