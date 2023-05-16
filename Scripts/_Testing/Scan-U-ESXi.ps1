@@ -1,20 +1,5 @@
 #requires -version 5
 <#
-#______________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#______________________________________________________________________________________________________________________
-#
-#                       U.S. Army Research, Development, and Engineering Command
-#                    Aviation and Missle Research, Development, and Engineering Center
-#                       Software Engineering Directorate, Redstone Arsenal, AL
-#______________________________________________________________________________________________________________________
-#
-# Export-Control Act Warning: WARNING - This document contains technical data whose ecport is restricted by the Arms
-# Export Control Act (Title 22, U.S.C., Sec 2751, et seq) or the Export Administration Act of 1979, as amended, Title
-# 50, U.S.C, App. 2401 et seq. Violations of these export laws are subject to severe criminal penalties.
-# Disseminate in accordance with provisions of DoD Directive 5230.25.
-#______________________________________________________________________________________________________________________
 #
 .SYNOPSIS
     Scan ESXi server for vulnerabilities using STIG V1R1 23Mar07
@@ -23,7 +8,7 @@
     Using Powershell, PowerCLI and local commands to check if settings are set
 
 .NOTES
-  Author:         William Thompson
+  Author:         williamt31
   Creation Date:  20230502
   Version:        Purpose/Change
   --------        --------------
@@ -181,7 +166,7 @@ $Scan_ESXi = @'
 # U #
 ####################################################################################################
 #!/bin/sh
-# Created by: William Thompson
+# Created by: williamt31
 # Created on: 20230510
 # Version: V1R1 2023Mar07
 # Purpose: Check for VMware vSphere 7.0 STIG settings
@@ -1355,8 +1340,3 @@ Write-Host "`nThere are $($cIIFind.Count) Unique: CAT II Findings"
 $cIIFind  | Format-Table
 Write-Host "`nThere are $($cIIIFind.Count) Unique: CAT III Findings"
 $cIIIFind | Format-Table
-
-#______________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#______________________________________________________________________________________________________________________
