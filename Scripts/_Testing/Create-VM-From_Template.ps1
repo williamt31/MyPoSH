@@ -9,7 +9,7 @@
     On the next run it will load VM's from this template to create VMs on a VMWare vCenter cluster.
 
 .NOTES
-    Author:         William Thompson
+    Author:         williamt31
 
 
     Creation Date:  20220713
