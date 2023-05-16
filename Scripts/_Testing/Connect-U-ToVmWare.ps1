@@ -1,20 +1,5 @@
 #requires -Version 5
 <######################################################################################################################
-#______________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#______________________________________________________________________________________________________________________
-#
-#                       U.S. Army Research, Development, and Engineering Command
-#                    Aviation and Missle Research, Development, and Engineering Center
-#                       Software Engineering Directorate, Redstone Arsenal, AL
-#______________________________________________________________________________________________________________________
-#
-# Export-Control Act Warning: WARNING - This document contains technical data whose ecport is restricted by the Arms
-# Export Control Act (Title 22, U.S.C., Sec 2751, et seq) or the Export Administration Act of 1979, as amended, Title
-# 50, U.S.C, App. 2401 et seq. Violations of these export laws are subject to severe criminal penalties.
-# Disseminate in accordance with provisions of DoD Directive 5230.25.
-#______________________________________________________________________________________________________________________
 #
 .SYNOPSIS
     Facilitates connecting to Dev or Prod VmWare ENV.
@@ -170,7 +155,3 @@ Finally {
     Write-Host "Script Executed successfully!"
     If ( $sVerbose ) { Write-Log $lInfo 0 "End executing $ScriptName Version: $sVersion" }
 }
-#______________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#______________________________________________________________________________________________________________________
