@@ -5,21 +5,6 @@
 # Operation: Obtains all network adapter alias names using invoke-command
 #                       
 # Creation Date: 2022-05-18
-#__________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#__________________________________________________________________________________________________________________
-#
-#                       U.S. Army Research, Development, and Engineering Command
-#                    Aviation and Missle Research, Development, and Engineering Center
-#                       Software Engineering Directorate, Redstone Arsenal, AL
-#__________________________________________________________________________________________________________________
-#
-# Export-Control Act Warning: WARNING - This document contains technical data whose ecport is restricted by the Arms
-# Export Control Act (Title 22, U.S.C., Sec 2751, et seq) or the Export Administration Act of 1979, as amended, Title
-# 50, U.S.C, App. 2401 et seq. Violations of these export laws are subject to severe criminal penalties.
-# Disseminate in accordance with provisions of DoD Directive 5230.25.
-#__________________________________________________________________________________________________________________
 #
 # Author: William Thompson
 #
@@ -161,8 +146,3 @@ foreach ( $i in $Comps ) {
     }
     $iCount++
 }
-
-#______________________________________________________________________________________________________________________
-#
-#                                        ***  UNCLASSIFIED  ***
-#______________________________________________________________________________________________________________________
