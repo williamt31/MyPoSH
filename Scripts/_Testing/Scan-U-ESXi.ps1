@@ -41,7 +41,7 @@ If (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 $Error.Clear()
 $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $sScriptVersion = "1.0"
-$sDataStore = "NETAPP_LUN_1:\_iso-Tools\STIGstuff"
+$sDataStore = "DATASTORE:\_iso-Tools\STIGstuff"
 # Log File Info
 $sLogPath = $ScriptPath
 $sLogName = ([IO.FileInfo]$MyInvocation.MyCommand.Definition).BaseName
@@ -90,10 +90,6 @@ Function Test-Connection () {
         Write-Log $lError "You are not currently connected to any VMware servers, check your connection and retry script."
         Exit 1
     }
-    #If ( ( $Global:DefaultVIServers ).Name -eq "_IpAddress_" ) {
-    #    Write-log $lWarning "This script is intended to run on a single Vsphere host at a time, please disconnect from Vcenter.`n"
-    #    Exit 1
-    #}
 }
 <###
 # Function:     Get-Hosts
@@ -124,12 +120,10 @@ Function Set-SSH ( $Flag ) {
         Get-VMHost $h | Get-VMHostService | Where-Object {$_.Label -eq 'SSH'} | Set-VMHostService -Policy On -Confirm:$False > $null
         Get-VMHost $h | Get-VMHostService | Where-Object {$_.Label -eq 'SSH'} | Start-VMHostService -Confirm:$False > $null
         Get-VMHost $h | Get-AdvancedSetting -Name UserVars.ESXiShellInteractiveTimeOut | Set-AdvancedSetting -Value 0 -Confirm:$False > $null
-        #Get-VMHost $h | Get-AdvancedSetting -Name UserVars.ESXiShellTimeOut | Set-AdvancedSetting -Value 0 -Confirm:$False > $null
     }
     ElseIf ( $Flag -eq "Close" ) {
         Get-VMHost $h | Get-VMHostService | Where-Object {$_.Label -eq 'SSH'} | Stop-VMHostService -Confirm:$False > $null
         Get-VMHost $h | Get-AdvancedSetting -Name UserVars.ESXiShellInteractiveTimeOut | Set-AdvancedSetting -Value 120 -Confirm:$False > $null
-        #Get-VMHost $h | Get-AdvancedSetting -Name UserVars.ESXiShellTimeOut | Set-AdvancedSetting -Value 600 -Confirm:$False > $null
     }
 }
 <###
@@ -1338,5 +1332,5 @@ Write-Host "`nThere are $($cIFind.Count) Unique: CAT I Findings"
 $cIFind   | Format-Table
 Write-Host "`nThere are $($cIIFind.Count) Unique: CAT II Findings"
 $cIIFind  | Format-Table
-Write-Host "`nThere are $($cIIIFind.Count) Unique: CAT III Findings"
+Write-Host "`nThere are $($cIIIFind.Count) Unique: CAT III Findings`n"
 $cIIIFind | Format-Table
