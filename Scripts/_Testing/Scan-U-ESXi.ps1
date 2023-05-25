@@ -535,7 +535,7 @@ If ( Test-Path $sDataStore ) {
     $VULN = "V-256378"
     $CAT = "II"
     $TEST = ( Get-VMHost $h | Get-AdvancedSetting -Name Syslog.global.logHost ).Value
-    If ( $TEST -ne "" ) {
+    If ( $TEST -eq "upd://domain.com,tcp://domain.com" ) {
         $Finding = $False
     }
     Elseif ( $TEST -eq "" ) {
@@ -677,10 +677,10 @@ If ( Test-Path $sDataStore ) {
     $VULN = "V-256399"
     $CAT = "II"
     $TEST = ( Get-VMHost $h | Get-AdvancedSetting -Name Config.HostAgent.plugins.solo.enableMob ).Value
-    If ( $TEST -eq "False" ) {
+    If ( $TEST -eq $False ) {
         $Finding = $False
     }
-    Elseif ( $TEST -ne "False" ) {
+    Elseif ( $TEST -ne $False ) {
         $Finding = $True
         Add-Vuln $CAT $VULN $RuleTitle
     }
@@ -707,7 +707,7 @@ If ( Test-Path $sDataStore ) {
     $VULN = "V-256401"
     $CAT  = "II"
     $TEST = ( Get-VMHost $h | Get-VMHostService | Where-Object {$_.Label -eq "ESXi Shell"} ).Running
-    If ( $TEST -ne $False ) {
+    If ( $TEST -eq $False ) {
         $Finding = $False
     }
     Elseif ( $TEST -eq $True ) {
@@ -859,10 +859,10 @@ If ( Test-Path $sDataStore ) {
     $VULN = "V-256414"
     $CAT  = "II"
     $TEST = ( Get-VMHostSnmp | Select-Object Enabled ).Enabled
-    If ( $TEST -eq "False" ) {
+    If ( $TEST -eq $False ) {
         $Finding = $False
     }
-    Elseif ( $TEST -ne "False" ) {
+    Elseif ( $TEST -ne $False ) {
         $Finding = $True
         Add-Vuln $CAT $VULN $RuleTitle
     }
@@ -1025,18 +1025,26 @@ If ( Test-Path $sDataStore ) {
     $RuleTitle = "All port groups on standard switches must be configured to a value other than that of the native virtual local area network (VLAN)."
     $VULN = "V-256424"
     $CAT  = "II"
+    $TEST = @{}
+    $FindingCount = 0
     $TEST = ( Get-VirtualPortGroup -Standard | Select-Object Name, VLanId ).VLanId
-    If ( -Not ( $TEST.Contains( 0 ) ) ) {
-        $Finding = $False
-    }
-    Elseif ( $TEST.Contains( 0 ) ) {
-        $Finding = $True
-        Add-Vuln $CAT $VULN $RuleTitle
-    }
-    Else {
-        $Finding = $Error[0]
+    For ( $t=0; $t -lt $TEST.Length; $t++ ) {
+        If ( -Not ( $TEST[$t].Equals( 0 ) ) ) {
+            $Finding = $False
+        }
+        Elseif ( $TEST[$t].Equals( 0 ) ) {
+            $FindingCount++
+            Add-Vuln $CAT $VULN $RuleTitle
+        }
+        Else {
+            $Finding = $Error[0]
+        }
+        If ( $FindingCount -gt 0 ) {
+            $Finding = $True
+        }
     }
     Write-Log $lInfo "$h`t$CAT`t$VULN`t$Finding`t$TEST"
+    $TEST = $Null
     
     $RuleTitle = "All port groups on standard switches must not be configured to virtual local area network (VLAN) 4095 unless Virtual Guest Tagging (VGT) is required."
     $VULN = "V-256425"
@@ -1137,21 +1145,21 @@ If ( Test-Path $sDataStore ) {
     Write-Log $lInfo "$h`t$CAT`t$VULN`t$Finding`t$TEST"
     
     $RuleTitle = "The ESXi host must enable audit logging."
-    # Notes: Need to determine what the correct location for lab should be.
     $VULN = "V-256436"
     $CAT  = "II"
-    $TEST = ( ( Get-EsxCli -v2 -VMHost $h ).system.auditrecords.get.invoke() ).AuditRecordStorageDirectory
-    If ( $TEST -eq "Blah" ) {
+    $TEST1 = ( ( Get-EsxCli -v2 -VMHost $h ).system.auditrecords.get.invoke() ).AuditRecordStorageDirectory
+    $TEST2 = ( ( Get-EsxCli -v2 -VMHost $h ).system.auditrecords.get.invoke() ).AuditRecordStorageCapacity
+    If ( ( $TEST1 -eq "/scratch/auditLog" ) -and ( $TEST2 -eq "100" ) ) {
         $Finding = $False
     }
-    Elseif ( $TEST -eq "/scratch/auditLog" ) {
+    Elseif ( ( $TEST1 -ne "/scratch/auditLog" ) -or ( $TEST2 -ne "100" ) ) {
         $Finding = $True
         Add-Vuln $CAT $VULN $RuleTitle
     }
     Else {
         $Finding = $Error[0]
     }
-    Write-Log $lInfo "$h`t$CAT`t$VULN`t$Finding`t$TEST"
+    Write-Log $lInfo "$h`t$CAT`t$VULN`t$Finding`t$TEST1, $TEST2"
     
     $RuleTitle = "The ESXi host must enable strict x509 verification for SSL syslog endpoints."
     $VULN = "V-256437"
@@ -1323,14 +1331,22 @@ If ( $sVerbose -ge 1 ) {
     $StopWatch.Reset()
 }
 
-$Report = Import-Csv -Delimiter "`t" -Path .\20230511_Scan-ESXi.log -Header Date, Flag, Host, CAT, Vuln, Finding, Value
+$ReportRaw = Import-Csv -Delimiter "`t" -Path .\20230511_Scan-ESXi.log -Header Date, Flag, Host, CAT, Vuln, Finding, Value
+$FilterLine1 = ( $ReportRaw | Where-Object { $_.Vuln -eq "V-256375" } )[-1]
+$FilterLine2 = ( $ReportRaw | Select-Object -Last 1 )
+$StartLine   = ( $ReportRaw | Select-String -Pattern $FilterLine1 ).LineNumber
+$EndLine     = ( $ReportRaw | Select-String -Pattern $FilterLine2 ).LineNumber
+$Report      = $ReportRaw | Select-Object -Last $( $EndLine - $StartLine + 1 )
 
 $cIFind   = $Report | Where-Object { ( $_.Finding -eq "True" -and $_.CAT -eq "I"   ) }
 $cIIFind  = $Report | Where-Object { ( $_.Finding -eq "True" -and $_.CAT -eq "II"  ) }
 $cIIIFind = $Report | Where-Object { ( $_.Finding -eq "True" -and $_.CAT -eq "III" ) }
-Write-Host "`nThere are $($cIFind.Count) Unique: CAT I Findings"
+$ManCheck = $Report | Where-Object { ( $_.Finding -eq "True" -and $_.Flag -eq "WARNING" ) }
+
+Write-Host "There are: $( $cIFind.Count ) Unique: CAT I Findings`n"
 $cIFind   | Format-Table
-Write-Host "`nThere are $($cIIFind.Count) Unique: CAT II Findings"
+Write-Host "There are: $( $cIIFind.Count ) Unique: CAT II Findings`n"
 $cIIFind  | Format-Table
-Write-Host "`nThere are $($cIIIFind.Count) Unique: CAT III Findings`n"
+Write-Host "There are: $( $cIIIFind.Count ) Unique: CAT III Findings`n"
 $cIIIFind | Format-Table
+Write-Host "There are: $( $ManCheck.Count ) Manual checks to be performed`n"
