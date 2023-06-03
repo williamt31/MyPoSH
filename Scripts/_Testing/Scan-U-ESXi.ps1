@@ -41,7 +41,7 @@ If (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 $Error.Clear()
 $ScriptPath = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $sScriptVersion = "1.0"
-$sDataStore = "DATASTORE:\_iso-Tools\STIGstuff"
+$sDataStore = "<DATASTORE>:\_iso-Tools\STIGstuff"
 # Log File Info
 $sLogPath = $ScriptPath
 $sLogName = ([IO.FileInfo]$MyInvocation.MyCommand.Definition).BaseName
@@ -452,7 +452,7 @@ If ( $sVerbose -ge 1 ) {
     $StopWatch.Start()
 }
 Test-Connection
-New-PSDrive -PSProvider VimDatastore -Root '\' -Name NETAPP_LUN_1 -Location $( Get-Datastore -Name NETAPP_LUN_1 ) > $null
+New-PSDrive -PSProvider VimDatastore -Root '\' -Name <Datastore> -Location $( Get-Datastore -Name <Datastore> ) > $null
 If ( -Not ( Test-Path $sDataStore ) ) {
     New-Item -Type Directory $sDataStore
     Write-Log $lWarning "Missing remote path, creating: $sDataStore"
@@ -469,7 +469,7 @@ If ( Test-Path $sDataStore ) {
     Set-SSH "Open"
     Copy-DatastoreItem -Item .\Scan_ESXi.sh -Destination $sDataStore
     Write-Warning -Message "Select to (S)uspend script now and manually SSH to $h`
-     Navigate to the DataStore /vmfs/volumes/NETAPP_LUN_1/_iso-Tools/STIGstuff and copy 'Scan-ESXi.sh' to /tmp`
+     Navigate to the DataStore /vmfs/volumes/<Datastore>/_iso-Tools/STIGstuff and copy 'Scan-ESXi.sh' to /tmp`
      Run: chmod +x /tmp/Scan_ESXi.sh
      The from the DataStore dir execute /tmp/Scan-ESXi.sh`
      When completed type exit twice and (y) to continue." -WarningAction Inquire
@@ -1331,7 +1331,7 @@ If ( $sVerbose -ge 1 ) {
     $StopWatch.Reset()
 }
 
-$ReportRaw = Import-Csv -Delimiter "`t" -Path .\20230511_Scan-ESXi.log -Header Date, Flag, Host, CAT, Vuln, Finding, Value
+$ReportRaw = Import-Csv -Delimiter "`t" -Path .\20230511_Scan-U-ESXi.log -Header Date, Flag, Host, CAT, Vuln, Finding, Value
 $FilterLine1 = ( $ReportRaw | Where-Object { $_.Vuln -eq "V-256375" } )[-1]
 $FilterLine2 = ( $ReportRaw | Select-Object -Last 1 )
 $StartLine   = ( $ReportRaw | Select-String -Pattern $FilterLine1 ).LineNumber
