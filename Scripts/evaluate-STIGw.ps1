@@ -15,7 +15,7 @@
     evaluate-STIGw.ps1
 
 .NOTES
-    Author:     Williamt31
+    Author:     William
     
     Version:    1.4
     Created:    20220808
